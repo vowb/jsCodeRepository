@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style>
+			*{ padding: 0 ; margin: 0 ; text-decoration: none ; list-style: none ;}
+			div#loop_pic{ overflow: hidden ; width: 980px ; height: 210px ; position: absolute ; top: 50% ; left: 50% ; margin: -105px 0 0 -465px ; }
+			div#loop_pic ul.loop_pic_set { width: calc(100% * 5) ; height: 100% ; }
+			div#loop_pic ul.loop_pic_set li{ width: 980px ; height: 210px ; float: left ; position:relative ; transition: .5s ; cursor: pointer ;}
+			div#loop_pic dl.loop_button dd:first-child{ width: 30px ; height: 70px ; background: rgba(43,43,43,.1) ;position: absolute ; z-index: 1 ; top: 50% ; left: 0 ; margin-top: -35px ; border-top-right-radius: 10px ; border-bottom-right-radius: 10px ; }
+			div#loop_pic dl.loop_button dd:nth-child(2){ width: 30px ; height: 70px ; background: rgba(43,43,43,.1) ;position: absolute ; z-index: 1 ; top: 50% ; right: 0 ; margin-top: -35px ; border-top-left-radius: 10px ; border-bottom-left-radius: 10px ; }
+			div#loop_pic dl.loop_button dd:last-child{ width: }
+		</style>
+		<script type="text/javascript">
+			window.onload=function(){
+				var timer = null;
+				var picSet = document.querySelectorAll("li");
+				var button = document.getElementsByClassName("loop_button")[0].children;
+				var elementWidth =  picSet[1].offsetWidth
+				//初始化滚动
+				function iniLoop(){
+					picSet[picSet.length-1].style.zIndex=picSet[picSet.length-2].style.zIndex="-100"
+					picSet[picSet.length-1].style.transform=picSet[picSet.length-2].style.transform="translateX("+-(picSet.length) * elementWidth+"px)"
+					for(var i=0;i<picSet.length;i++){
+						picSet[i].index=(i * -1);
+						picSet[picSet.length-1].index=1;
+						picSet[picSet.length-2].index=2;
+					}
+				}
+
+				//向右滚动
+				function rightLoop(){
+					function loop(){
+						var data;
+						for(var i=0;i<picSet.length;i++){
+							if(typeof picSet[i].index == "undefined")picSet[i].index=(i * -1);
+							picSet[i].index+=1;
+							if(picSet[i].index==3)picSet[i].index=-(picSet.length-3);
+							if(picSet[i].index==-(picSet.length-3)){
+								data = {
+									loopElementObject:picSet[i],
+									index:i
+								}
+							}
+							picSet[i].style.transform+="translateX(-"+elementWidth+"px)"
+							picSet[i].style.zIndex="0";
+							
+						}
+						return data
+						
+					}
+					function rightTurn(object){
+							object.loopElementObject.style.zIndex="-100";
+							object.loopElementObject.style.transform="translateX("+((-object.index + 2) * elementWidth )+"px)"
+					}
+					rightTurn(loop())
+				}
+				
+				
+				//向左滚动
+				function leftLoop(){
+					function loop(){
+						var data;
+						for(var i=0;i<picSet.length;i++){
+							if(typeof picSet[i].index == "undefined")picSet[i].index=(i * -1);
+							picSet[i].index-=1;
+							
+							if(picSet[i].index==-3)picSet[i].index=(picSet.length-3);
+							if(picSet[i].index==(picSet.length-3)){
+								data = {
+									loopElementObject:picSet[i],
+									index:i
+								}
+							}
+							picSet[i].style.zIndex="0";
+							picSet[i].style.transform+="translateX("+elementWidth+"px)"
+						}
+						return data				
+					}
+					function leftTurn(object){
+							object.loopElementObject.style.zIndex="-100";
+							object.loopElementObject.style.transform="translateX("+(-(object.index + 2) * elementWidth )+"px)"
+					}
+					leftTurn(loop())
+					// leftCount++
+				}
+				
+				
+				function controlLoop(){
+					
+					for(var i=0;i<picSet.length;i++){
+						picSet[i].onmouseover=button[0].onmouseover=button[1].onmouseover=function(){
+							clearInterval(timer)
+						}
+						picSet[i].onmouseout=button[0].onmouseout=button[1].onmouseout=function(){
+							timer = setInterval(rightLoop,3000)
+						}
+					}
+					
+					button[0].onclick=function(){
+						leftLoop();
+					}
+					button[1].onclick=function(){
+						rightLoop();
+					}
+				}
+				
+				iniLoop();
+				timer = setInterval(rightLoop,3000)
+				controlLoop()
+			}
+		</script>
+	</head>
+	<body>
+		<div id="loop_pic">
+			<dl class="loop_button">
+				<dd></dd>
+				<dd></dd>
+			</dl>
+			
+			<ul class="loop_pic_set">
+				<li><img href="#" src="img/1.jpg" /></li>
+				<li><img href="#" src="img/2.png" /></li>
+				<li><img href="#" src="img/3.jpg" /></li>
+				<li><img href="#" src="img/4.png" /></li>
+				<li><img href="#" src="img/5.jpg" /></li>
+			</ul>
+		<div>
+	</body>
+</html>
